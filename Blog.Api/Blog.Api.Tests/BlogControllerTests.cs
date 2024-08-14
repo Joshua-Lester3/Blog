@@ -105,4 +105,52 @@ public class BlogControllerTests
 		// Assert
 		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 	}
+
+	[TestMethod]
+	public async Task GetBlogPost_ValidBlogPostId_Success()
+	{
+		// Arrange
+		var added = await AddBlogPost();
+		var url = $"/blog/getBlogPost?id={added!.BlogPostId}";
+
+		// Act
+		var response = await _httpClient.GetAsync(url);
+		var blogPost = await response.Content.ReadFromJsonAsync<BlogPost>();
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+		Assert.IsNotNull(blogPost);
+	}
+
+	[TestMethod]
+	public async Task GetBlogPost_InvalidBlogPostId_StatusCodeIsBadRequest()
+	{
+		// Arrange
+		var url = $"/blog/getBlogPost?id=-1";
+
+		// Act
+		var response = await _httpClient.GetAsync(url);
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+	}
+
+	private async Task<BlogPost?> AddBlogPost()
+	{
+		// Arrange
+		BlogPostDto dto = new()
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		};
+		var content = JsonContent.Create(dto);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/addBlogPost", content);
+		var blogPost = await response.Content.ReadFromJsonAsync<BlogPost>();
+
+		// Assert
+		Assert.IsNotNull(blogPost);
+		return blogPost;
+	}
 }

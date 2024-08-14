@@ -118,4 +118,38 @@ public class BlogServiceTests : DatabaseTestBase
 		// Assert
 		await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _service.AddBlogPost(dto));
 	}
+
+	[TestMethod]
+	public async Task GetBlogPost_ValidId_Success()
+	{
+		// Arrange
+		var post = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+
+		// Act
+		var result = await _service.GetBlogPost(post.BlogPostId);
+
+		// Assert
+		Assert.AreEqual(post, result);
+	}
+
+	[TestMethod]
+	public async Task GetBlogPost_InvalidId_ReturnsNull()
+	{
+		// Arrange
+		var post = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+
+		// Act
+		var result = await _service.GetBlogPost(-1);
+
+		// Assert
+		Assert.IsNull(result);
+	}
 }

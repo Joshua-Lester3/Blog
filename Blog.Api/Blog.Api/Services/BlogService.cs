@@ -52,4 +52,10 @@ public class BlogService
 
 		return blogPost;
 	}
+
+	public async Task<BlogPost?> GetBlogPost(int id)
+	{
+		return await _context.BlogPosts
+			.FirstOrDefaultAsync(post => post.BlogPostId == id);
+	}
 }

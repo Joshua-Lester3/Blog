@@ -47,4 +47,16 @@ public class BlogController : ControllerBase
 		var blogPost = await _service.AddBlogPost(dto);
 		return Ok(blogPost);
 	}
+
+	[HttpGet("GetBlogPost")]
+	public async Task<IActionResult> GetBlogPost(int id)
+	{
+		var result = await _service.GetBlogPost(id);
+
+		if (result is null)
+		{
+			return BadRequest();
+		}
+		return Ok(result);
+	} 
 }
