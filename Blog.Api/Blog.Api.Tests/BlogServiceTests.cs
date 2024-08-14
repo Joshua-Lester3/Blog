@@ -152,4 +152,32 @@ public class BlogServiceTests : DatabaseTestBase
 		// Assert
 		Assert.IsNull(result);
 	}
+
+	[TestMethod]
+	public async Task DeleteBlogPost_PostExists_Success()
+	{
+		// Arrange
+		var post = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+
+		// Act
+		await _service.DeleteBlogPost(post.BlogPostId);
+
+		// Assert
+		Assert.IsFalse(post.IsVisible);
+	}
+
+	[TestMethod]
+	public async Task DeleteBlogPost_PostDoesNotExist_Success()
+	{
+		// Arrange
+
+		// Act
+
+		// Assert
+		Assert.IsFalse(await _service.DeleteBlogPost(-1));
+	}
 }

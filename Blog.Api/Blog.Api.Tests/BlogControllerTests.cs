@@ -153,4 +153,31 @@ public class BlogControllerTests
 		Assert.IsNotNull(blogPost);
 		return blogPost;
 	}
+
+	[TestMethod]
+	public async Task DeleteBlogPost_PostExists_Success()
+	{
+		// Arrange
+		var added = (await AddBlogPost())!;
+		var jsonContent = JsonContent.Create(added.BlogPostId);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/deleteBlogPost", jsonContent);
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+	}
+
+	[TestMethod]
+	public async Task DeleteBlogPost_PostDoesNotExist_BadRequest()
+	{
+		// Arrange
+		var jsonContent = JsonContent.Create(-1);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/deleteBlogPost", jsonContent);
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+	}
 }

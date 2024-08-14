@@ -10,4 +10,5 @@ public class BlogPost
 	[Required]
 	public required string Content { get; set; }
 	public DateTime CreatedDate { get; set; }
+	public required bool IsVisible { get; set; }
 }

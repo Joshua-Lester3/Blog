@@ -1,24 +1,12 @@
 # Blog
 
-ideas:
+todo:
+- delete post (except you don't delete, you just toggle a flag to show it or not in home page)
+- admin account seeded with way to login on the app
+- edit post :)
 
 requirements:
-- home page with blog v-cards going in reverse order from creation date
-- when click on v-card, opens full blog post in separate page
 - admin account that can go to the website and add posts
-
-
-backend design:
-- controllers:
-    - tokenController
-    - blogController
-- services:
-    - blogService
-    - 
-
-- tests:
-    - 
-
 
 later additions:
 - views (keep it simple for now)

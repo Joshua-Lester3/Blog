@@ -46,6 +46,7 @@ public class BlogService
 			Title = dto.Title,
 			Content = dto.Content,
 			CreatedDate = DateTime.UtcNow,
+			IsVisible = true,
 		};
 		await _context.BlogPosts.AddAsync(blogPost);
 		await _context.SaveChangesAsync();
@@ -57,5 +58,18 @@ public class BlogService
 	{
 		return await _context.BlogPosts
 			.FirstOrDefaultAsync(post => post.BlogPostId == id);
+	}
+
+	public async Task<bool> DeleteBlogPost(int id)
+	{
+		var post = await _context.BlogPosts.FirstOrDefaultAsync(post => post.BlogPostId == id);
+
+		if (post is not null)
+		{
+			post.IsVisible = false;
+			await _context.SaveChangesAsync();
+			return true;
+		}
+		return false;
 	}
 }

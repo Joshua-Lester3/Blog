@@ -58,5 +58,17 @@ public class BlogController : ControllerBase
 			return BadRequest();
 		}
 		return Ok(result);
-	} 
+	}
+
+	[HttpPost("DeleteBlogPost")]
+	public async Task<IActionResult> DeleteBlogPost([FromBody] int id)
+	{
+		var result = await _service.DeleteBlogPost(id);
+
+		if (result)
+		{
+			return Ok();
+		}
+		return BadRequest("Something went wrong while deleting post.");
+	}
 }
