@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Blog.Api.Identity;
+using Blog.Api.Services;
 
 var AllOrigins = "AllOrigins";
 
@@ -59,6 +60,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
 	options.UseSqlServer(connectionString);
 });
+builder.Services.AddScoped<BlogService>();
 
 // Identity Services
 builder.Services.AddIdentityCore<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)

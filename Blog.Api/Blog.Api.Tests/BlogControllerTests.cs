@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Blog.Api.Dtos;
+using Blog.Api.Models;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http.Json;
 using System.Reflection.Metadata;
@@ -35,12 +37,72 @@ public class BlogControllerTests
 	{
 		// Arrange
 
-
 		// Act
 		var response = await _httpClient.GetAsync("/blog/getBlogList");
-		var content = await response.Content.ReadFromJsonAsync<List<string>>();
+		var content = await response.Content.ReadFromJsonAsync<List<BlogPost>>();
 
 		// Assert
 		Assert.IsNotNull(content);
+	}
+
+	[TestMethod]
+	public async Task AddBlogPost_NormalConditions_ReturnsAddedBlogPost()
+	{
+		// Arrange
+		BlogPostDto dto = new()
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		};
+		var content = JsonContent.Create(dto);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/addBlogPost", content);
+		var blogPost = await response.Content.ReadFromJsonAsync<BlogPost>();
+
+		// Assert
+		Assert.IsNotNull(blogPost);
+		Assert.AreEqual(dto.Title, blogPost.Title);
+		Assert.AreEqual(dto.Content, blogPost.Content);
+	}
+
+	[TestMethod]
+	[DataRow(null, "From the distant north...")]
+	[DataRow("Vinland Saga Vol. 1", null)]
+	public async Task AddBlogPost_NullTitleOrContent_ReturnsStatusCode400(string title, string content)
+	{
+		// Arrange
+		BlogPostDto dto = new()
+		{
+			Title = title,
+			Content = content,
+		};
+		var jsonContent = JsonContent.Create(dto);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/addBlogPost", jsonContent);
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+	}
+
+	[TestMethod]
+	[DataRow("", "From the distant north...")]
+	[DataRow("Vinland Saga Vol. 1", "")]
+	public async Task AddBlogPost_EmptyTitleOrContent_ReturnsStatusCode400(string title, string content)
+	{
+		// Arrange
+		BlogPostDto dto = new()
+		{
+			Title = title,
+			Content = content,
+		};
+		var jsonContent = JsonContent.Create(dto);
+
+		// Act
+		var response = await _httpClient.PostAsync("/blog/addBlogPost", jsonContent);
+
+		// Assert
+		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 	}
 }

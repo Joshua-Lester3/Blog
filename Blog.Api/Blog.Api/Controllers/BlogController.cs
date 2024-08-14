@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Blog.Api.Dtos;
+using Blog.Api.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Api.Controllers;
@@ -7,10 +9,42 @@ namespace Blog.Api.Controllers;
 [ApiController]
 public class BlogController : ControllerBase
 {
-	[HttpGet("GetBlogList")]
-	public IActionResult GetBlogList()
+	private readonly BlogService _service;
+
+	public BlogController(BlogService service)
 	{
-		var list = new string[] { "hi", "hiii" };
-		return Ok(list);
+		_service = service;
+	}
+
+	[HttpGet("GetBlogList")]
+	public async Task<IActionResult> GetBlogList()
+	{
+		var blogList = await _service.GetBlogList();
+
+		return Ok(blogList);
+	}
+
+	[HttpPost("AddBlogPost")]
+	public async Task<IActionResult> AddBlogPost(BlogPostDto dto)
+	{
+		if (dto.Title is null)
+		{
+			return BadRequest("Title cannot be null.");
+		}
+		if (dto.Content is null)
+		{
+			return BadRequest("Content cannot be null.");
+		}
+		if (dto.Title.Trim().Length == 0)
+		{
+			return BadRequest("Title cannot contain only whitespace or be empty.");
+		}
+		if (dto.Content.Trim().Length == 0)
+		{
+			return BadRequest("Content cannot contain only whitespace or be empty.");
+		}
+
+		var blogPost = await _service.AddBlogPost(dto);
+		return Ok(blogPost);
 	}
 }
