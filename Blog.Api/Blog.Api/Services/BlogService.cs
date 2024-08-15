@@ -9,6 +9,7 @@ namespace Blog.Api.Services;
 public class BlogService
 {
 	private readonly AppDbContext _context;
+	private static object _postingBlogPostLock = new();
 
 	public BlogService(AppDbContext context)
 	{
@@ -23,7 +24,7 @@ public class BlogService
 			.ToListAsync();
 	}
 
-	public async Task<BlogPost> AddBlogPost(BlogPostDto dto)
+	public async Task<BlogPost> PostBlogPost(BlogPostDto dto)
 	{
 		if (dto.Title is null)
 		{
@@ -42,17 +43,52 @@ public class BlogService
 			throw new ArgumentException("Content cannot contain only whitespace or be empty.");
 		}
 
-		BlogPost blogPost = new()
+		BlogPost? foundBlogPost = null;
+		if (dto.BlogPostId != -1)
 		{
-			Title = dto.Title,
-			Content = dto.Content,
-			CreatedDate = DateTime.UtcNow,
-			IsVisible = true,
-		};
-		await _context.BlogPosts.AddAsync(blogPost);
-		await _context.SaveChangesAsync();
+			foundBlogPost = await _context.BlogPosts
+				.FirstOrDefaultAsync(post => post.BlogPostId == dto.BlogPostId);
+		}
+		if (foundBlogPost is null)
+		{
+			lock (_postingBlogPostLock)
+			{
+				if (dto.BlogPostId != -1)
+				{
+					foundBlogPost = _context.BlogPosts
+						.FirstOrDefault(post => post.BlogPostId == dto.BlogPostId);
+				}
 
-		return blogPost;
+				if (foundBlogPost is null)
+				{
+					BlogPost blogPost = new()
+					{
+						Title = dto.Title,
+						Content = dto.Content,
+						CreatedDate = DateTime.UtcNow,
+						IsVisible = true,
+					};
+					_context.BlogPosts.Add(blogPost);
+					_context.SaveChanges();
+					return blogPost;
+				} else
+				{
+					foundBlogPost.Title = dto.Title;
+					foundBlogPost.Content = dto.Content;
+					_context.SaveChanges();
+					return foundBlogPost;
+				}
+			}
+		} else
+		{
+			lock (_postingBlogPostLock)
+			{
+				foundBlogPost.Title = dto.Title;
+				foundBlogPost.Content = dto.Content;
+				_context.SaveChanges();
+				return foundBlogPost;
+			}
+		}
 	}
 
 	public async Task<BlogPost?> GetBlogPost(int id)

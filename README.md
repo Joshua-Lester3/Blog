@@ -1,9 +1,8 @@
 # Blog
 
 todo:
-- add post frontend
 - admin account seeded with way to login on the app
-- edit post :)
+- add/edit/delete features unavailable to non-admins
 
 requirements:
 - admin account that can go to the website and add posts

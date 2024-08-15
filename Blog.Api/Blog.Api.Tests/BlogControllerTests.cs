@@ -57,7 +57,7 @@ public class BlogControllerTests
 		var content = JsonContent.Create(dto);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/addBlogPost", content);
+		var response = await _httpClient.PostAsync("/blog/postBlogPost", content);
 		var blogPost = await response.Content.ReadFromJsonAsync<BlogPost>();
 
 		// Assert
@@ -80,7 +80,7 @@ public class BlogControllerTests
 		var jsonContent = JsonContent.Create(dto);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/addBlogPost", jsonContent);
+		var response = await _httpClient.PostAsync("/blog/postBlogPost", jsonContent);
 
 		// Assert
 		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -100,7 +100,7 @@ public class BlogControllerTests
 		var jsonContent = JsonContent.Create(dto);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/addBlogPost", jsonContent);
+		var response = await _httpClient.PostAsync("/blog/postBlogPost", jsonContent);
 
 		// Assert
 		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -146,7 +146,7 @@ public class BlogControllerTests
 		var content = JsonContent.Create(dto);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/addBlogPost", content);
+		var response = await _httpClient.PostAsync("/blog/postBlogPost", content);
 		var blogPost = await response.Content.ReadFromJsonAsync<BlogPost>();
 
 		// Assert

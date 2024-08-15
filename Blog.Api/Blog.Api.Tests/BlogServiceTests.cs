@@ -22,7 +22,7 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task GetBlogList_AddedOnePost_ReturnsListLengthOne()
 	{
 		// Arrange
-		await _service.AddBlogPost(new BlogPostDto
+		await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -39,19 +39,19 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task GetBlogList_AddedThreePosts_ReturnsReverseOrderedListByCreatedDate()
 	{
 		// Arrange
-		var post1 = await _service.AddBlogPost(new BlogPostDto
+		var post1 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
 		});
 
-		var post2 = await _service.AddBlogPost(new BlogPostDto
+		var post2 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 2",
 			Content = "When asked what he believed in, a viking once said...",
 		});
 
-		var post3 = await _service.AddBlogPost(new BlogPostDto
+		var post3 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 3",
 			Content = "Zshk zshk zshk... Is his Majesty King Sweyn awake?",
@@ -70,7 +70,7 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task GetBlogList_ThreePostsWithOneRemoved_ReturnsTwoPosts()
 	{
 		// Arrange
-		var post1 = await _service.AddBlogPost(new BlogPostDto
+		var post1 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -79,13 +79,13 @@ public class BlogServiceTests : DatabaseTestBase
 		post1.IsVisible = false;
 		await _context.SaveChangesAsync();
 
-		var post2 = await _service.AddBlogPost(new BlogPostDto
+		var post2 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 2",
 			Content = "When asked what he believed in, a viking once said...",
 		});
 
-		var post3 = await _service.AddBlogPost(new BlogPostDto
+		var post3 = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 3",
 			Content = "Zshk zshk zshk... Is his Majesty King Sweyn awake?",
@@ -101,7 +101,7 @@ public class BlogServiceTests : DatabaseTestBase
 	}
 
 	[TestMethod]
-	public async Task AddBlogPost_NonemptyNonnullDtoFields_SuccessfullyAdds()
+	public async Task PostBlogPost_NonemptyNonnullDtoFields_SuccessfullyAdds()
 	{
 		// Arrange
 		BlogPostDto dto = new()
@@ -111,7 +111,7 @@ public class BlogServiceTests : DatabaseTestBase
 		};
 
 		// Act
-		BlogPost post = await _service.AddBlogPost(dto);
+		BlogPost post = await _service.PostBlogPost(dto);
 
 		// Assert
 		CollectionAssert.Contains(_context.BlogPosts.ToList(), post);
@@ -120,7 +120,7 @@ public class BlogServiceTests : DatabaseTestBase
 	[TestMethod]
 	[DataRow(null, "From the distant north...")]
 	[DataRow("Vinland Saga Vol. 1", null)]
-	public async Task AddBlogPost_NullDtoFields_ThrowsArgumentException(string title, string content)
+	public async Task PostBlogPost_NullDtoFields_ThrowsArgumentException(string title, string content)
 	{
 		// Arrange
 		BlogPostDto dto = new()
@@ -132,13 +132,13 @@ public class BlogServiceTests : DatabaseTestBase
 		// Act
 
 		// Assert
-		await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _service.AddBlogPost(dto));
+		await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await _service.PostBlogPost(dto));
 	}
 
 	[TestMethod]
 	[DataRow("", "From the distant north...")]
 	[DataRow("Vinland Saga Vol. 1", "")]
-	public async Task AddBlogPost_EmptyDtoFields_ThrowsArgumentException(string title, string content)
+	public async Task PostBlogPost_EmptyDtoFields_ThrowsArgumentException(string title, string content)
 	{
 		// Arrange
 		BlogPostDto dto = new()
@@ -150,14 +150,14 @@ public class BlogServiceTests : DatabaseTestBase
 		// Act
 
 		// Assert
-		await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _service.AddBlogPost(dto));
+		await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _service.PostBlogPost(dto));
 	}
 
 	[TestMethod]
 	public async Task GetBlogPost_ValidId_Success()
 	{
 		// Arrange
-		var post = await _service.AddBlogPost(new BlogPostDto
+		var post = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -174,7 +174,7 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task GetBlogPost_NotVisible_ReturnsNull()
 	{
 		// Arrange
-		var post = await _service.AddBlogPost(new BlogPostDto
+		var post = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -193,7 +193,7 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task GetBlogPost_InvalidId_ReturnsNull()
 	{
 		// Arrange
-		var post = await _service.AddBlogPost(new BlogPostDto
+		var post = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -210,7 +210,7 @@ public class BlogServiceTests : DatabaseTestBase
 	public async Task DeleteBlogPost_PostExists_Success()
 	{
 		// Arrange
-		var post = await _service.AddBlogPost(new BlogPostDto
+		var post = await _service.PostBlogPost(new BlogPostDto
 		{
 			Title = "Vinland Saga Vol. 1",
 			Content = "From the distant north...",
@@ -232,5 +232,29 @@ public class BlogServiceTests : DatabaseTestBase
 
 		// Assert
 		Assert.IsFalse(await _service.DeleteBlogPost(-1));
+	}
+
+	[TestMethod]
+	public async Task PostBlogPost_PostExists_Success()
+	{
+		// Arrange
+		var post = await _service.PostBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+		var dto = new BlogPostDto
+		{
+			BlogPostId = post.BlogPostId,
+			Title = "Vinland Saga Vol. 2",
+			Content = "When asked what he believed in, a viking once said...",
+		};
+
+		// Act
+		post = await _service.PostBlogPost(dto);
+
+		// Assert
+		Assert.AreEqual(dto.Title, post.Title);
+		Assert.AreEqual(dto.Content, post.Content);
 	}
 }

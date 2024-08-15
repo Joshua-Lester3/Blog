@@ -24,7 +24,7 @@ public class BlogController : ControllerBase
 		return Ok(blogList);
 	}
 
-	[HttpPost("AddBlogPost")]
+	[HttpPost("PostBlogPost")]
 	public async Task<IActionResult> AddBlogPost(BlogPostDto dto)
 	{
 		if (dto.Title is null)
@@ -44,7 +44,7 @@ public class BlogController : ControllerBase
 			return BadRequest("Content cannot contain only whitespace or be empty.");
 		}
 
-		var blogPost = await _service.AddBlogPost(dto);
+		var blogPost = await _service.PostBlogPost(dto);
 		return Ok(blogPost);
 	}
 
