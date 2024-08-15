@@ -1,7 +1,8 @@
 # Blog
 
 todo:
-- delete post (except you don't delete, you just toggle a flag to show it or not in home page)
+- add post frontend
+- delete post frontend
 - admin account seeded with way to login on the app
 - edit post :)
 

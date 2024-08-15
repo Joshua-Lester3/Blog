@@ -60,8 +60,8 @@ public class BlogController : ControllerBase
 		return Ok(result);
 	}
 
-	[HttpPost("DeleteBlogPost")]
-	public async Task<IActionResult> DeleteBlogPost([FromBody] int id)
+	[HttpPost("DeleteBlogPost/{id}")]
+	public async Task<IActionResult> DeleteBlogPost([FromRoute] int id)
 	{
 		var result = await _service.DeleteBlogPost(id);
 

@@ -18,6 +18,7 @@ public class BlogService
 	public async Task<List<BlogPost>> GetBlogList()
 	{
 		return await _context.BlogPosts
+			.Where(post => post.IsVisible)
 			.OrderByDescending(post => post.CreatedDate)
 			.ToListAsync();
 	}
@@ -57,7 +58,7 @@ public class BlogService
 	public async Task<BlogPost?> GetBlogPost(int id)
 	{
 		return await _context.BlogPosts
-			.FirstOrDefaultAsync(post => post.BlogPostId == id);
+			.FirstOrDefaultAsync(post => post.BlogPostId == id && post.IsVisible);
 	}
 
 	public async Task<bool> DeleteBlogPost(int id)

@@ -7,16 +7,21 @@
 
       <v-app-bar-title>My Blog</v-app-bar-title>
     </v-app-bar>
-    <v-navigation-drawer v-model="navDrawer" :width="navigationDrawerWidth" disable-resize-watcher temporary>
-      <v-list class="text-center">
-        <v-list-item @click="router.push('/'); navDrawer = false;">
-          <v-icon>mdi-home</v-icon> Home
-        </v-list-item>
-        <v-list-item @click="router.push('/about')">
-          <v-icon>mdi-information-slab-box-outline</v-icon> About
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <!-- SSR with v-nav-drawer causes hydration mismatch. 
+     No current fix as Vuetify is not SSR friendly according to a github user (?)
+     Only found solution is to render v-nav-drawer on client side -->
+    <ClientOnly>
+      <v-navigation-drawer v-model="navDrawer" :width="navigationDrawerWidth" disable-resize-watcher temporary>
+        <v-list class="text-center">
+          <v-list-item @click="router.push('/'); navDrawer = false;">
+            <v-icon>mdi-home</v-icon> Home
+          </v-list-item>
+          <v-list-item @click="router.push('/about')">
+            <v-icon>mdi-information-slab-box-outline</v-icon> About
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </ClientOnly>
     <v-main>
       <NuxtPage />
     </v-main>
@@ -32,7 +37,6 @@ const display = ref(useDisplay());
 
 const navigationDrawerWidth = computed(() => {
   switch (display.value.name) {
-    case 'xs': return 175;
     case 'sm': return 200;
     case 'md': return 225;
     case 'lg': return 250;

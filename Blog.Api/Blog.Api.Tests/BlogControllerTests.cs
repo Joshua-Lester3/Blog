@@ -159,10 +159,9 @@ public class BlogControllerTests
 	{
 		// Arrange
 		var added = (await AddBlogPost())!;
-		var jsonContent = JsonContent.Create(added.BlogPostId);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/deleteBlogPost", jsonContent);
+		var response = await _httpClient.PostAsync($"/blog/deleteBlogPost/{added.BlogPostId}", null);
 
 		// Assert
 		Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -172,10 +171,9 @@ public class BlogControllerTests
 	public async Task DeleteBlogPost_PostDoesNotExist_BadRequest()
 	{
 		// Arrange
-		var jsonContent = JsonContent.Create(-1);
 
 		// Act
-		var response = await _httpClient.PostAsync("/blog/deleteBlogPost", jsonContent);
+		var response = await _httpClient.PostAsync("/blog/deleteBlogPost/-1", null);
 
 		// Assert
 		Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);

@@ -67,6 +67,40 @@ public class BlogServiceTests : DatabaseTestBase
 	}
 
 	[TestMethod]
+	public async Task GetBlogList_ThreePostsWithOneRemoved_ReturnsTwoPosts()
+	{
+		// Arrange
+		var post1 = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+
+		post1.IsVisible = false;
+		await _context.SaveChangesAsync();
+
+		var post2 = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 2",
+			Content = "When asked what he believed in, a viking once said...",
+		});
+
+		var post3 = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 3",
+			Content = "Zshk zshk zshk... Is his Majesty King Sweyn awake?",
+		});
+
+		var posts = new BlogPost[] { post3, post2 };
+
+		// Act
+		var blogList = await _service.GetBlogList();
+
+		// Assert
+		CollectionAssert.AreEqual(posts, blogList);
+	}
+
+	[TestMethod]
 	public async Task AddBlogPost_NonemptyNonnullDtoFields_SuccessfullyAdds()
 	{
 		// Arrange
@@ -134,6 +168,25 @@ public class BlogServiceTests : DatabaseTestBase
 
 		// Assert
 		Assert.AreEqual(post, result);
+	}
+
+	[TestMethod]
+	public async Task GetBlogPost_NotVisible_ReturnsNull()
+	{
+		// Arrange
+		var post = await _service.AddBlogPost(new BlogPostDto
+		{
+			Title = "Vinland Saga Vol. 1",
+			Content = "From the distant north...",
+		});
+		post.IsVisible = false;
+		await _context.SaveChangesAsync();
+
+		// Act
+		var result = await _service.GetBlogPost(post.BlogPostId);
+
+		// Assert
+		Assert.IsNull(result);
 	}
 
 	[TestMethod]
