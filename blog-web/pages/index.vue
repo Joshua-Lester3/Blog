@@ -1,6 +1,7 @@
 <template>
-    <v-app class="ma-5">
+    <v-app class="mx-5 my-3">
         <v-container>
+            <v-btn class="d-flex mx-auto mb-6" @click="router.push('/blogView?id=-1')">Add</v-btn>
             <v-card v-for="(post, index) in posts" elevation="3" height="auto" class="my-5 mx-auto" width="auto"
                 max-width="1000" @click="router.push(`/blogView?id=${post.blogPostId}`)">
                 <v-card-title class="font-weight-black">

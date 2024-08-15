@@ -2,7 +2,6 @@
 
 todo:
 - add post frontend
-- delete post frontend
 - admin account seeded with way to login on the app
 - edit post :)
 
