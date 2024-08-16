@@ -3,10 +3,10 @@
         <v-alert v-model="hasError" tile icon="$warning" color="warning" title="Invalid input" :text="errorMessage"
             closable />
         <v-container>
-            <v-btn icon="mdi-arrow-left" elevation="0" @click="router.back()"></v-btn>
+            <v-btn icon="mdi-arrow-left" elevation="0" @click="router.push('/')"></v-btn>
             <v-btn v-if="editing" variant="flat" color="success" class="ml-3"
                 @click.once="submitBlogPost">Submit</v-btn>
-            <v-menu v-else>
+            <v-menu v-else-if="isAdmin">
                 <template v-slot:activator="{ props }">
                     <v-btn icon="mdi-dots-vertical" v-bind="props" elevation="0" class="ml-3"></v-btn>
                 </template>
@@ -59,6 +59,7 @@
 <script setup lang="ts">
 import Axios from 'axios';
 import type BlogPost from '~/scripts/blogPost';
+import TokenService from '~/scripts/tokenService';
 
 let blogPostId: number;
 const route = useRoute();
@@ -70,7 +71,8 @@ const blogPost = ref<BlogPost>({
     createdDate: '2024-08-14',
 });
 const showDeleteDialog = ref<boolean>(false);
-
+const tokenService: Ref<TokenService> | undefined = inject('TOKEN');
+const isAdmin = computed(() => tokenService?.value.isAdmin());
 const editing = ref<boolean>(false);
 const title = ref<string>('');
 const content = ref<string>('');
@@ -111,7 +113,7 @@ async function submitBlogPost() {
             .then(response => {
                 errorMessage.value = '';
                 hasError.value = false;
-                router.back();
+                router.push('/');
             })
             .catch(error => {
                 hasError.value = true;
@@ -124,7 +126,7 @@ async function deleteBlogPost() {
     try {
         const url = `blog/deleteBlogPost/${blogPost.value.blogPostId}`;
         await Axios.post(url, null);
-        router.back();
+        router.push('/');
     } catch (error) {
         console.error('Error deleting post: ', error);
     }

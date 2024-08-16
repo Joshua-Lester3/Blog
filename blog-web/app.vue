@@ -25,15 +25,54 @@
     <v-main>
       <NuxtPage />
     </v-main>
+    <v-footer class="bg-grey-lighten-1">
+    <v-row justify="center" no-gutters>
+      <v-btn
+        v-for="link in links"
+        :key="link.text"
+        class="mx-2"
+        color="white"
+        rounded="xl"
+        variant="text"
+        @click="router.push(link.url)"
+      >{{link.text}}
+      </v-btn>
+      <v-col class="text-center mt-4" cols="12">
+        {{ new Date().getFullYear() }} — <strong>My Blog</strong>
+      </v-col>
+    </v-row>
+  </v-footer>
   </v-app>
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
+import TokenService from '~/scripts/tokenService';
+
+interface Link {
+  text: string;
+  url: string;
+}
 
 const navDrawer = ref(false);
 const router = useRouter();
 const display = ref(useDisplay());
+const tokenService = ref(new TokenService());
+provide('TOKEN', tokenService);
+const links = [
+  {
+    text: 'Home',
+    url: '/',
+  },
+  {
+    text: 'About',
+    url: '/about',
+  },
+  {
+    text: 'Login',
+    url: '/login',
+  }
+]
 
 const navigationDrawerWidth = computed(() => {
   switch (display.value.name) {

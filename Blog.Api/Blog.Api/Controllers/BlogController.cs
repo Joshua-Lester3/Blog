@@ -1,5 +1,7 @@
 ﻿using Blog.Api.Dtos;
+using Blog.Api.Identity;
 using Blog.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +27,7 @@ public class BlogController : ControllerBase
 	}
 
 	[HttpPost("PostBlogPost")]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> AddBlogPost(BlogPostDto dto)
 	{
 		if (dto.Title is null)
@@ -61,6 +64,7 @@ public class BlogController : ControllerBase
 	}
 
 	[HttpPost("DeleteBlogPost/{id}")]
+	[Authorize(Roles = Roles.Admin)]
 	public async Task<IActionResult> DeleteBlogPost([FromRoute] int id)
 	{
 		var result = await _service.DeleteBlogPost(id);

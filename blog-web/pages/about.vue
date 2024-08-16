@@ -15,7 +15,6 @@
                 This is a website to practice my skills in Vue, Vuetify, Nuxt, and ASP.NET.
             </v-card-text>
         </v-card>
-
     </v-container>
 </template>
 
